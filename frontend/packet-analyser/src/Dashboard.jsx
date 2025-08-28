@@ -1,6 +1,5 @@
 import React,{useState,useEffect} from "react";
 import { Bar, Pie, Line } from "react-chartjs-2";
-import Navbar from "./components/Navbar";
 import TablePagination from "@mui/material/TablePagination";
 import {
   Chart as ChartJS,
@@ -28,6 +27,7 @@ import {
   TableHead,
   TableRow
 } from "@mui/material";
+import InitialPage  from "./components/InitialPage";
 
 ChartJS.register(
   CategoryScale,
@@ -59,28 +59,46 @@ const darkTheme = createTheme({
 });
 const API_URL = "http://127.0.0.1:5000/api/stats";
 
-export default function Dashboard() {
+export default function Dashboard({ selectedInterface, pollingTime,isMonitoring }) {
     const [stats, setStats] = useState(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10); 
     
       //POlling
-    useEffect(() => {
-        // Fetch initially
-        const fetchStats = () => {
-          fetch(API_URL)
-            .then(res => res.json())
-            .then(setStats);
+      useEffect(() => {
+        let interval;
+        if (isMonitoring && selectedInterface) {
+          const startCapture = async () => {
+            await fetch("http://127.0.0.1:5000/api/capture", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ interface: selectedInterface })
+            });
+          };
+      
+          const fetchStats = () => {
+            fetch(API_URL)
+              .then(res => res.json())
+              .then(setStats)
+              .catch(() => setStats(null));
+          };
+          if(isMonitoring){
+            startCapture().then(() => {
+              fetchStats();
+              interval = setInterval(fetchStats, pollingTime * 1000);
+            });
+          }
+         
+        }
+      
+        // Cleanup
+        return () => {
+          if (interval) clearInterval(interval);
         };
-        fetchStats();
+      }, [selectedInterface, pollingTime, isMonitoring]);
     
-        // Poll every 5 seconds
-        const interval = setInterval(fetchStats, 10000);
-        return () => clearInterval(interval); // Cleanup
-      }, []);
-    
-    if (!stats) return <Typography>Loading...</Typography>;
-    const paginatedQueries = stats.recent_queries.slice(
+    if(!stats)  return (<InitialPage/>)
+    const paginatedQueries = stats?.recent_queries.slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       );
@@ -90,7 +108,7 @@ export default function Dashboard() {
     datasets: [
       {
         label: "Request counts",
-        data: stats.top_domains.map(([_, count]) => count),
+        data: stats.top_domains.map(([, count]) => count),
         backgroundColor: "rgba(54, 162, 235, 0.7)"
       }
     ]
@@ -101,7 +119,7 @@ export default function Dashboard() {
     datasets: [
       {
         label: "Top Clients",
-        data: stats.top_clients.map(([_, count]) => count),
+        data: stats.top_clients.map(([, count]) => count),
         backgroundColor: "rgba(255, 99, 132, 0.7)"
       }
     ]
@@ -159,12 +177,11 @@ export default function Dashboard() {
       }
     ]
   };
-
+  
   return (
     <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Navbar />
-      <Box sx={{ p: 4, bgcolor: "background.default", minHeight: "100vh" }}>
+      <CssBaseline />  
+    <Box sx={{ p: 4, bgcolor: "background.default", minHeight: "100vh" }}>
         <Typography variant="subtitle1" gutterBottom>
           Total Queries: <strong>{stats.total_queries}</strong>
         </Typography>
