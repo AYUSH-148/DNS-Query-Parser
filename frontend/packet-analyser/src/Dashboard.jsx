@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react";
+import React,{useState,useEffect, useRef } from "react";
 import { Bar, Pie, Line } from "react-chartjs-2";
 import TablePagination from "@mui/material/TablePagination";
 import {
@@ -59,14 +59,15 @@ const darkTheme = createTheme({
 });
 const API_URL = "http://127.0.0.1:5000/api/stats";
 
-export default function Dashboard({ selectedInterface, pollingTime,isMonitoring }) {
+export default function Dashboard({ selectedInterface, pollingTime,isMonitoring=false }) {
     const [stats, setStats] = useState(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10); 
-    
+    const intervalRef = useRef(null);
       //POlling
       useEffect(() => {
-        let interval;
+        // let interval;
+        if (intervalRef.current) clearInterval(intervalRef.current);
         if (isMonitoring && selectedInterface) {
           const startCapture = async () => {
             await fetch("http://127.0.0.1:5000/api/capture", {
@@ -82,18 +83,16 @@ export default function Dashboard({ selectedInterface, pollingTime,isMonitoring 
               .then(setStats)
               .catch(() => setStats(null));
           };
-          if(isMonitoring){
-            startCapture().then(() => {
-              fetchStats();
-              interval = setInterval(fetchStats, pollingTime * 1000);
-            });
-          }
-         
+      
+          startCapture().then(() => {
+            fetchStats();
+            intervalRef.current = setInterval(fetchStats, pollingTime * 1000);
+          });
         }
       
-        // Cleanup
+        // Cleanup interval WHENEVER isMonitoring becomes false or component unmounts
         return () => {
-          if (interval) clearInterval(interval);
+          if (intervalRef.current) clearInterval(intervalRef.current);
         };
       }, [selectedInterface, pollingTime, isMonitoring]);
     

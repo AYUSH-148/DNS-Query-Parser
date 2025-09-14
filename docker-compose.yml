@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  # The Flask Backend Service
+  backend:
+    build: ./backend
+    # This is the ONLY part we need for network sniffing privileges.
+    # It works on Docker Desktop for Mac, Windows, and Linux.
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    # We map the port so the frontend can reach it.
+    ports:
+      - "5000:5000"
+
+  # The React Frontend Service
+  frontend:
+    build: ./frontend/packet-analyser
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
