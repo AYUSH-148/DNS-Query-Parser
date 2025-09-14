@@ -16,8 +16,6 @@ A real-time, containerized web application for monitoring, visualizing, and anal
 
 ## 🖼️ Screenshots
 
-*Add screenshots of your dashboard and charts here if available!*
-
 ---
 
 ## 🛠️ Tech Stack
@@ -104,28 +102,13 @@ dns-threat-analyzer/
 └── README.md
 ```
 
----
 
-## 🏗️ Development
-
-- **Backend:**  
-  See `backend/README.md` for API details and local development.
-- **Frontend:**  
-  See `frontend/packet-analyser/README.md` to run React app locally.
-
----
 
 ## 🙌 Acknowledgements
 
 - [Scapy](https://scapy.net/), [Flask](https://flask.palletsprojects.com/)
 - [React.js](https://react.dev/), [Material-UI](https://mui.com/), [Chart.js](https://www.chartjs.org/)
 - [Docker](https://www.docker.com/)
-
----
-
-## 📄 License
-
-*Specify your preferred license here, e.g., MIT, Apache-2.0, etc.*
 
 ---
 
