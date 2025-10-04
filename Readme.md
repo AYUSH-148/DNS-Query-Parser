@@ -15,6 +15,10 @@ A real-time, containerized web application for monitoring, visualizing, and anal
 ---
 
 ## 🖼️ Screenshots
+<img width="1139" height="379" alt="image" src="https://github.com/user-attachments/assets/9ff22d3b-5e5e-459e-aed5-7cae875266d4" />
+<img width="1334" height="465" alt="image" src="https://github.com/user-attachments/assets/21021a0e-9cf7-4807-b689-2b666f24d8a4" />
+<img width="659" height="386" alt="image" src="https://github.com/user-attachments/assets/a3cca63f-ffb3-4da0-a053-d037845dda41" />
+<img width="1783" height="559" alt="image" src="https://github.com/user-attachments/assets/4d72045a-7701-4b57-838b-2bffbbd6fb2f" />
 
 ---
 
